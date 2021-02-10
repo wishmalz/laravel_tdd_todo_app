@@ -8,17 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-<h1>Task board</h1>
-<ul>
-    @forelse($projects as $project)
-        <li>
-            <a href="{{ $project->path() }}">{{ $project->title }}</a>
-        </li>
-    @empty
-        <li>
-            No projects yet.
-        </li>
-    @endforelse
-</ul>
+<h1>{{ $project->title }}</h1>
+<p>{{ $project->description }}</p>
 </body>
 </html>
