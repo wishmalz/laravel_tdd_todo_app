@@ -2,22 +2,34 @@
 
 namespace Tests\Feature;
 
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Project;
 
 class ProjectsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
     /** @test */
+    public function only_authenticated_users_can_create_projects()
+    {
+        $attributes = factory(Project::class)->raw();
+
+        $this->post('/projects', $attributes)->assertRedirect('login');
+    }
+
+    /** @test */
     public function a_user_can_create_a_project()
     {
         $this->withoutExceptionHandling();
 
+        $this->actingAs(factory(User::class)->create());
+
         $attributes = [
             'title' => $this->faker->sentence,
-            'description' => $this->faker->paragraph
+            'description' => $this->faker->paragraph,
         ];
         $this->post('/projects', $attributes)->assertRedirect('/projects');
 
@@ -31,7 +43,7 @@ class ProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $project = factory('App\Project')->create();
+        $project = factory(Project::class)->create();
 
         $this->get($project->path())
             ->assertSee($project->title)
@@ -41,7 +53,9 @@ class ProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_title()
     {
-        $attributes = factory('App\Project')->raw(['title' => '']);
+        $this->actingAs(factory(User::class)->create());
+
+        $attributes = factory(Project::class)->raw(['title' => '']);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
     }
@@ -49,7 +63,9 @@ class ProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_description()
     {
-        $attributes = factory('App\Project')->raw(['description' => '']);
+        $this->actingAs(factory(User::class)->create());
+
+        $attributes = factory(Project::class)->raw(['description' => '']);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
