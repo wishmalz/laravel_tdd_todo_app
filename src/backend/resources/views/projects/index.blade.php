@@ -1,24 +1,24 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-<h1>Task board</h1>
-<ul>
-    @forelse($projects as $project)
-        <li>
-            <a href="{{ $project->path() }}">{{ $project->title }}</a>
-        </li>
-    @empty
-        <li>
-            No projects yet.
-        </li>
+@extends('layouts.app')
+
+@section('content')
+
+    <div class="flex items-center mb-3">
+        <a href="{{ route('projects.create') }}">New Project</a>
+    </div>
+
+    <div class="flex">
+        @forelse($projects as $project)
+            <div class="bg-white mr-4 p-5 rounded shadow w-1/3">
+                <h3 class="font-normal text-xl py-4">
+                    {{ $project->title }}
+                </h3>
+                <div class="text-gray-400">
+                    {{ str_limit($project->description, 100) }}
+                </div>
+            </div>
+        @empty
+            <div>No projects yet.</div>
+    </div>
     @endforelse
-</ul>
-</body>
-</html>
+    </div>
+@endsection
