@@ -8,6 +8,8 @@ class Task extends Model
 {
     protected array $guarded = [];
 
+    protected array $touches = ['project'];
+
     public function project()
     {
         return $this->belongsTo(Project::class);
