@@ -4,7 +4,8 @@
     <header class="flex items-center mb-3 py-4">
         <div class="flex justify-between w-full items-end">
             <p class="text-gray-400 no-underline text-sm font-normal">
-                <a href="{{ route('projects') }}" class="text-gray-400 no-underline text-sm font-normal">My Projects</a> / {{ $project->title }}
+                <a href="{{ route('projects') }}" class="text-gray-400 no-underline text-sm font-normal">My Projects</a>
+                / {{ $project->title }}
             </p>
             <a href="{{ route('projects.create') }}" class="button">New Project</a>
         </div>
@@ -17,9 +18,27 @@
                     <h2 class="text-gray-400 no-underline font-normal text-lg mb-3">Tasks</h2>
                     @foreach($project->tasks as $task)
                         <div class="card mb-3">
-                            {{ $task->body }}
+                            <form action="{{ $task->path() }}" method="POST">
+                                @method('PATCH')
+                                @csrf
+                                <div class="flex">
+                                    <input value="{{ $task->body }}" name="body" class="w-full {{
+                                    $task->completed ? 'text-gray-400' : ''
+                                     }}">
+                                    <input type="checkbox" name="completed" onchange="this.form.submit()" {{
+                                    $task->completed ? 'checked' : ''
+                                     }}>
+                                </div>
+                            </form>
                         </div>
                     @endforeach
+                    <div class="card mb-3">
+                        <form method="POST" action="{{ $project->path() . '/tasks' }}">
+                            {{ csrf_field() }}
+                            <input
+                                placeholder="Add a new task" type="text" class="w-full" name="body">
+                        </form>
+                    </div>
                 </div>
                 <div>
                     <h2 class="text-gray-400 no-underline font-normal text-lg mb-3">General Notes</h2>
