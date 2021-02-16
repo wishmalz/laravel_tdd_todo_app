@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Project;
 use App\Task;
 use App\User;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,10 +39,9 @@ class ProjectTasksTest extends TestCase
     {
         $this->signIn();
 
-        $project = factory(Project::class)->create();
-        $task = $project->addTask('test task');
+        $project = ProjectFactory::withTasks(1)->create();
 
-        $this->patch($task->path(), ['body' => 'changed'])->assertStatus(403);
+        $this->patch($project->tasks->first()->path(), ['body' => 'changed'])->assertStatus(403);
 
         $this->assertDatabaseMissing('tasks', ['body' => 'changed']);
     }
@@ -49,9 +49,8 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_project_can_have_tasks()
     {
-        $this->signIn();
-
-        $project = auth()->user()->projects()->create(factory(Project::class)->raw());
+        $project = ProjectFactory::ownedBy($this->signIn())
+            ->create();
 
         $this->post($project->path() . '/tasks', ['body' => 'Test task']);
 
@@ -62,13 +61,11 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_can_be_updated()
     {
-        $this->signIn();
+        $project = ProjectFactory::ownedBy($this->signIn())
+            ->withTasks(1)
+            ->create();
 
-        $project = auth()->user()->projects()->create(factory(Project::class)->raw());
-
-        $task = $project->addTask('test task');
-
-        $this->patch($project->path() . '/tasks/' . $task->id, [
+        $this->patch($project->tasks->first()->path(), [
             'body' => 'changed',
             'completed' => true
         ]);
@@ -82,9 +79,8 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_requires_a_body()
     {
-        $this->signIn();
-
-        $project = auth()->user()->projects()->create(factory(Project::class)->raw());
+        $project = ProjectFactory::ownedBy($this->signIn())
+            ->create();
 
         $attributes = factory(Task::class)->raw(['body' => '']);
 
