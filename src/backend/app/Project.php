@@ -8,6 +8,8 @@ class Project extends Model
 {
     protected array $guarded = [];
 
+    public array $old = [];
+
     public function path()
     {
         return "/projects/{$this->id}";
@@ -35,6 +37,21 @@ class Project extends Model
 
     public function recordActivity($description)
     {
-        $this->activity()->create(['description' => $description]);
+        $this->activity()->create([
+            'description' => $description,
+            'changes' => $this->activityChanges($description)
+        ]);
+    }
+
+    protected function activityChanges($activityType)
+    {
+        if ($activityType !== 'updated') {
+            return null;
+        }
+
+        return [
+            'before' => array_except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+            'after' => array_except($this->getChanges(), 'updated_at'),
+        ];
     }
 }
