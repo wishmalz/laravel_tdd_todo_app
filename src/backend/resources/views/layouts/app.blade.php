@@ -25,7 +25,7 @@
         <div class="container mx-auto">
             <div class="flex justify-between items-center py-2">
                 <h1>
-                    <a class="navbar-brand" href="{{ route('projects') }}">
+                    <a class="navbar-brand" href="{{ route('projects.index') }}">
                         <img src="/images/logo.svg" alt="Taskboard" width="50px" height="50px">
                     </a>
                 </h1>

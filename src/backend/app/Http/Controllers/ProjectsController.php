@@ -24,7 +24,7 @@ class ProjectsController extends Controller
 
     public function edit(Project $project)
     {
-        return view('projects.edit' , compact('project'));
+        return view('projects.edit', compact('project'));
     }
 
     public function update(Project $project)
@@ -48,12 +48,21 @@ class ProjectsController extends Controller
         return view('projects.create');
     }
 
+    public function destroy(Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $project->delete();
+
+        return redirect('/projects');
+    }
+
     /**
      * @return array
      */
     protected function validateRequest()
     {
-         return request()->validate([
+        return request()->validate([
             'title' => 'sometimes|required',
             'description' => 'sometimes|required',
             'notes' => 'nullable'

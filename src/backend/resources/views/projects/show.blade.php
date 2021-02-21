@@ -4,7 +4,8 @@
     <header class="flex items-center mb-3 py-4">
         <div class="flex justify-between w-full items-end">
             <p class="text-gray-400 no-underline text-sm font-normal">
-                <a href="{{ route('projects') }}" class="text-gray-400 no-underline text-sm font-normal">My Projects</a>
+                <a href="{{ route('projects.index') }}" class="text-gray-400 no-underline text-sm font-normal">My
+                    Projects</a>
                 / {{ $project->title }}
             </p>
             <a href="{{ route('projects.edit', $project) }}" class="button">Edit Project</a>
@@ -62,6 +63,8 @@
             </div>
             <div class="lg:w-1/4 px-3">
                 @include('projects.card')
+
+                @include('projects.activity.card')
             </div>
         </div>
     </main>
