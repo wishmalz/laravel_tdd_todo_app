@@ -8,7 +8,18 @@
                     Projects</a>
                 / {{ $project->title }}
             </p>
-            <a href="{{ route('projects.edit', $project) }}" class="button">Edit Project</a>
+
+            <div class="flex items-center">
+                @foreach($project->members as $member)
+                    <img src="{{ gravatar_url($member->email) }}" alt="{{ $member->name }}'s
+                    avatar" class="rounded-full w-8 mr-2">
+                @endforeach
+                <img src="{{ gravatar_url($project->owner->email) }}" alt="{{
+                    $project->owner->name }}'s
+                    avatar" class="rounded-full w-8 mr-2">
+
+                <a href="{{ route('projects.edit', $project) }}" class="button ml-4">Edit Project</a>
+            </div>
         </div>
     </header>
 
@@ -51,20 +62,21 @@
                         <button type="submit" class="button">Save</button>
                     </form>
 
+                    @include('errors')
 
-                    @if($errors->any())
-                        <div class="field mt-6">
-                            @foreach($errors->all() as $error)
-                                <li class="text-sm text-red-600">{{ $error }}</li>
-                            @endforeach
-                        </div>
-                    @endif
                 </div>
             </div>
             <div class="lg:w-1/4 px-3">
                 @include('projects.card')
 
                 @include('projects.activity.card')
+
+                {{--                @if(auth()->user()->is($project->owner))--}}
+                @can('manage', $project)
+                    @include('projects.invite')
+                @endcan
+                {{--                @endif--}}
+
             </div>
         </div>
     </main>
