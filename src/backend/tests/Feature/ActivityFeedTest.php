@@ -18,7 +18,7 @@ class ActivityFeedTest extends TestCase
         $project = ProjectFactory::create();
 
         $this->assertCount(1, $project->activity);
-        $this->assertEquals('created', $project->activity[0]->description);
+        $this->assertEquals('created_project', $project->activity[0]->description);
     }
 
     /** @test */
@@ -29,7 +29,7 @@ class ActivityFeedTest extends TestCase
         $project->update(['title' => 'Updated']);
 
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('updated', $project->activity->last()->description);
+        $this->assertEquals('updated_project', $project->activity->last()->description);
     }
 
     /** @test */
