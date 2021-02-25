@@ -10,6 +10,8 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected array $guarded = [];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -45,7 +47,7 @@ class User extends Authenticatable
     public function accessibleProjects()
     {
         return Project::where('owner_id', $this->id)
-            ->orWhere('members', function($query) {
+            ->orWhereHas('members', function($query) {
                 $query->where('user_id', $this->id);
             })
             ->get();
