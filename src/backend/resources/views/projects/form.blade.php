@@ -1,26 +1,38 @@
-<div class="mt-10">
-    <label for="title">Title</label>
-    <div>
-        <input type="text" placeholder="My awesome project" name="title" class="shadow w-full"
-               value="{{ $project->title }}" required>
+@csrf
+
+<div class="field mb-6">
+    <label class="label text-sm mb-2 block" for="title">Title</label>
+
+    <div class="control">
+        <input
+                type="text"
+                class="input bg-transparent border border-muted-light rounded p-2 text-xs w-full"
+                name="title"
+                placeholder="My next awesome project"
+                required
+                value="{{ $project->title }}">
     </div>
-</div>
-<div class="mt-4">
-    <label for="description">Description</label>
-    <div>
-        <textarea name="description" class="shadow w-full"
-        placeholder="I should start doing exercise." required> {{ $project->description }} </textarea>
-    </div>
-</div>
-<div class="flex justify-between items-center mt-10">
-    <button type="submit" class="button">{{ $buttonText }}</button>
-    <a href="{{ $project->path() }}">Cancel</a>
 </div>
 
-@if($errors->any())
-    <div class="field mt-6">
-        @foreach($errors->all() as $error)
-            <li class="text-sm text-red-600">{{ $error }}</li>
-        @endforeach
+<div class="field mb-6">
+    <label class="label text-sm mb-2 block" for="description">Description</label>
+
+    <div class="control">
+            <textarea
+                name="description"
+                rows="10"
+                class="textarea bg-transparent border border-muted-light rounded p-2 text-xs w-full"
+                placeholder="I should start learning piano."
+                required>{{ $project->description }}</textarea>
     </div>
-@endif
+</div>
+
+<div class="field">
+    <div class="control">
+        <button type="submit" class="button is-link mr-2">{{ $buttonText }}</button>
+
+        <a href="{{ $project->path() }}" class="text-default">Cancel</a>
+    </div>
+</div>
+
+@include ('errors')

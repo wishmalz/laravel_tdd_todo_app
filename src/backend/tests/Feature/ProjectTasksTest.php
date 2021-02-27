@@ -40,7 +40,7 @@ class ProjectTasksTest extends TestCase
         $project = ProjectFactory::withTasks(1)->create();
 
         $this->patch($project->tasks[0]->path(), ['body' => 'changed'])
-            ->assertStatus(403);
+             ->assertStatus(403);
 
         $this->assertDatabaseMissing('tasks', ['body' => 'changed']);
     }
@@ -51,7 +51,7 @@ class ProjectTasksTest extends TestCase
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)
-            ->post($project->path() . '/tasks', ['body' => 'Test task']);
+             ->post($project->path() . '/tasks', ['body' => 'Test task']);
 
         $this->get($project->path())
             ->assertSee('Test task');
@@ -63,7 +63,7 @@ class ProjectTasksTest extends TestCase
         $project = ProjectFactory::withTasks(1)->create();
 
         $this->actingAs($project->owner)
-            ->patch($project->tasks[0]->path(), [
+             ->patch($project->tasks[0]->path(), [
                 'body' => 'changed'
             ]);
 
@@ -121,7 +121,7 @@ class ProjectTasksTest extends TestCase
         $attributes = factory('App\Task')->raw(['body' => '']);
 
         $this->actingAs($project->owner)
-            ->post($project->path() . '/tasks', $attributes)
+             ->post($project->path() . '/tasks', $attributes)
             ->assertSessionHasErrors('body');
     }
 }

@@ -2,54 +2,55 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+	use Notifiable;
 
-    protected array $guarded = [];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+		'name',
+		'email',
+		'password',
+	];
+
+	/**
+	 * The attributes that should be hidden for arrays.
+	 *
+	 * @var array
+	 */
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
+
+	/**
+	 * Get all projects owner by the user.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function projects()
+	{
+		return $this->hasMany(Project::class, 'owner_id')->latest('updated_at');
+	}
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * Get all projects that the user has access to.
+     * 
+     * @return mixed
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected array $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class, 'owner_id')->latest('updated_at');
-    }
-
-    public function accessibleProjects()
-    {
-        return Project::where('owner_id', $this->id)
-            ->orWhereHas('members', function($query) {
+	public function accessibleProjects()
+	{
+	    return Project::where('owner_id', $this->id)
+            ->orWhereHas('members', function ($query) {
                 $query->where('user_id', $this->id);
             })
             ->get();
-    }
+	}
 }
