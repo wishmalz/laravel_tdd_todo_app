@@ -1,15 +1,20 @@
-@extends('layouts.app')
+@extends ('layouts.app')
 
 @section('content')
-    <div class="flex justify-center mt-12 ">
-        <form method="POST" action="{{ $project->path() }}">
-            {{ csrf_field() }}
-            {{ method_field('PATCH') }}
+    <div class="lg:w-1/2 lg:mx-auto bg-card p-6 md:py-12 md:px-16 rounded shadow">
+        <h1 class="text-2xl font-normal mb-10 text-center">
+            Edit Your Project
+        </h1>
 
-            <h1 class="text-2xl font-bold text-center">Edit your project</h1>
+        <form
+                method="POST"
+                action="{{ $project->path() }}"
+        >
+            @method('PATCH')
 
-            @include('projects.form', ['buttonText' => 'Update Project'])
-
+            @include ('projects.form', [
+                'buttonText' => 'Update Project'
+            ])
         </form>
     </div>
 @endsection

@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Project;
 
 class ProjectTest extends TestCase
 {
@@ -14,7 +13,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function it_has_a_path()
     {
-        $project = factory(Project::class)->create();
+        $project = factory('App\Project')->create();
 
         $this->assertEquals('/projects/' . $project->id, $project->path());
     }
@@ -22,7 +21,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function it_belongs_to_an_owner()
     {
-        $project = factory(Project::class)->create();
+        $project = factory('App\Project')->create();
 
         $this->assertInstanceOf('App\User', $project->owner);
     }
@@ -30,7 +29,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function it_can_add_a_task()
     {
-        $project = factory(Project::class)->create();
+        $project = factory('App\Project')->create();
 
         $task = $project->addTask('Test task');
 
@@ -41,7 +40,7 @@ class ProjectTest extends TestCase
     /** @test */
     function it_can_invite_a_user()
     {
-        $project = factory(Project::class)->create();
+        $project = factory('App\Project')->create();
 
         $project->invite($user = factory(User::class)->create());
 
