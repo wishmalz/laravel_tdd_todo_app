@@ -1,18 +1,22 @@
 <?php
 
-
 namespace App;
-
 
 trait RecordsActivity
 {
-    public array $oldAttributes = [];
+    /**
+     * The project's old attributes.
+     *
+     * @var array
+     */
+    public $oldAttributes = [];
 
+    /**
+     * Boot the trait.
+     */
     public static function bootRecordsActivity()
     {
-        $recordableEvents = self::recordableEvents();
-
-        foreach ($recordableEvents as $event) {
+        foreach (self::recordableEvents() as $event) {
             static::$event(function ($model) use ($event) {
                 $model->recordActivity($model->activityDescription($event));
             });
@@ -25,6 +29,22 @@ trait RecordsActivity
         }
     }
 
+    /**
+     * Get the description of the activity.
+     *
+     * @param  string $description
+     * @return string
+     */
+    protected function activityDescription($description)
+    {
+        return "{$description}_" . strtolower(class_basename($this));
+    }
+
+    /**
+     * Fetch the model events that should trigger activity.
+     *
+     * @return array
+     */
     protected static function recordableEvents()
     {
         if (isset(static::$recordableEvents)) {
@@ -35,14 +55,10 @@ trait RecordsActivity
     }
 
     /**
-     * @param $description
-     * @return string
+     * Record activity for a project.
+     *
+     * @param string $description
      */
-    protected function activityDescription($description)
-    {
-        return "{$description}_" . strtolower(class_basename($this));
-    }
-
     public function recordActivity($description)
     {
         $this->activity()->create([
@@ -53,18 +69,36 @@ trait RecordsActivity
         ]);
     }
 
+    /**
+     * The activity feed for the project.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function activity()
+    {
+        if (get_class($this) === Project::class) {
+            return $this->hasMany(Activity::class)->latest();
+        }
+
+        return $this->morphMany(Activity::class, 'subject')->latest();
+    }
+
+    /**
+     * Fetch the changes to the model.
+     *
+     * @return array|null
+     */
     protected function activityChanges()
     {
         if ($this->wasChanged()) {
             return [
-                'before' => array_except(array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'),
-                'after' => array_except($this->getChanges(), 'updated_at'),
+                'before' => array_except(
+                    array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'
+                ),
+                'after' => array_except(
+                    $this->getChanges(), 'updated_at'
+                )
             ];
         }
-    }
-
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'subject')->latest();
     }
 }
