@@ -9,35 +9,61 @@ use App\User;
 class ProjectFactory
 {
     /**
-     * @var int|mixed
+     * The number of tasks for the project.
+     *
+     * @var int
      */
-    protected int $taskCount = 0;
+    protected $tasksCount = 0;
+
+    /**
+     * The owner of the project.
+     *
+     * @var User
+     */
     protected $user;
 
-    public function create()
+    /**
+     * Set the number of tasks to create for the project.
+     *
+     * @param  int $count
+     * @return $this
+     */
+    public function withTasks($count)
     {
-        $project = factory(Project::class)->create([
-            'owner_id' => $this->user ?? factory(User::class)
-        ]);
-
-        factory(Task::class, $this->taskCount)->create([
-            'project_id' => $project->id
-        ]);
-
-        return $project;
-    }
-
-    public function withTasks($count = 1)
-    {
-        $this->taskCount = $count;
+        $this->tasksCount = $count;
 
         return $this;
     }
 
+    /**
+     * Set the owner of the new project.
+     *
+     * @param  User $user
+     * @return $this
+     */
     public function ownedBy($user)
     {
         $this->user = $user;
 
         return $this;
     }
+
+    /**
+     * Arrange the world.
+     *
+     * @return Project
+     */
+    public function create()
+    {
+        $project = factory(Project::class)->create([
+            'owner_id' => $this->user ?? factory(User::class)
+        ]);
+
+        factory(Task::class, $this->tasksCount)->create([
+            'project_id' => $project
+        ]);
+
+        return $project;
+    }
 }
+
